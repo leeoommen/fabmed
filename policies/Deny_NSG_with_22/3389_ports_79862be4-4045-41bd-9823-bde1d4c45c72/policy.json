@@ -1,0 +1,86 @@
+{
+ "properties": {
+  "displayName": "Deny NSG with 22/3389 ports",
+  "policyType": "Custom",
+  "mode": "All",
+  "metadata": {
+   "createdBy": "278b3e95-6872-403f-8931-c39dad070974",
+   "createdOn": "2021-02-25T15:16:39.8954651Z",
+   "updatedBy": null,
+   "updatedOn": null
+  },
+  "parameters": {},
+  "policyRule": {
+   "if": {
+    "anyOf": [
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+       },
+       {
+        "not": {
+         "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+         "notEquals": "*"
+        }
+       },
+       {
+        "anyOf": [
+         {
+          "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+          "equals": "22"
+         },
+         {
+          "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+          "equals": "3389"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "allOf": [
+       {
+        "field": "type",
+        "equals": "Microsoft.Network/networkSecurityGroups"
+       },
+       {
+        "count": {
+         "field": "Microsoft.Network/networkSecurityGroups/securityRules[*]",
+         "where": {
+          "allOf": [
+           {
+            "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].sourceAddressPrefix",
+            "equals": "*"
+           },
+           {
+            "anyOf": [
+             {
+              "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange",
+              "equals": "22"
+             },
+             {
+              "field": "Microsoft.Network/networkSecurityGroups/securityRules[*].destinationPortRange",
+              "equals": "3389"
+             }
+            ]
+           }
+          ]
+         }
+        },
+        "greater": 0
+       }
+      ]
+     }
+    ]
+   },
+   "then": {
+    "effect": "deny"
+   }
+  }
+ },
+ "id": "/subscriptions/f4d4ae10-2845-463b-9582-7ae02fffc53c/providers/Microsoft.Authorization/policyDefinitions/79862be4-4045-41bd-9823-bde1d4c45c72",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "79862be4-4045-41bd-9823-bde1d4c45c72"
+}
